@@ -1,7 +1,7 @@
 # meedan/elasticsearch
-# elasticsearch 2.4 with elasticsearch-gui plugin
+# elasticsearch 5.2 with elasticsearch-gui plugin
 
-FROM elasticsearch:2.4
+FROM elasticsearch:5.2
 MAINTAINER sysops@meedan.com
 
 # https://github.com/jettro/elasticsearch-gui
