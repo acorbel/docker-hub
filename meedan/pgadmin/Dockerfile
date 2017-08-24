@@ -9,8 +9,8 @@ RUN groupadd -r postgres --gid=999 && useradd -r -g postgres --uid=999 postgres 
 
 # libpg
 ENV PG_MAJOR=9.6
-ENV PGADMIN_FILE=pgadmin4-1.2-py2-none-any.whl
-ENV PGADMIN_URL=https://ftp.postgresql.org/pub/pgadmin3/pgadmin4/v1.2/pip/${PGADMIN_FILE}
+ENV PGADMIN_FILE=pgadmin4-1.6-py2.py3-none-any.whl
+ENV PGADMIN_URL=https://ftp.postgresql.org/pub/pgadmin/pgadmin4/v1.6/pip/${PGADMIN_FILE}
 
 RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ trusty-pgdg main' ${PG_MAJOR} > /etc/apt/sources.list.d/pgdg.list
 
@@ -22,7 +22,7 @@ RUN curl -s -o ${PGADMIN_FILE} "${PGADMIN_URL}"
 
 RUN pip install ${PGADMIN_FILE} \
         && ln -sf /home/pgadmin/.pgadmin/config_local.py  /usr/local/lib/python2.7/dist-packages/pgadmin4/config_local.py \
-        && sed -i "s/DEFAULT_SERVER = 'localhost'/DEFAULT_SERVER = '0.0.0.0'/" /usr/local/lib/python2.7/dist-packages/pgadmin4/config.py
+        && sed -ie "s/DEFAULT_SERVER = '.*'/DEFAULT_SERVER = '0.0.0.0'/" /usr/local/lib/python2.7/dist-packages/pgadmin4/config.py
 
 RUN rm ${PGADMIN_FILE} ;
 

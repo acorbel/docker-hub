@@ -19,14 +19,14 @@ RUN apt-get install -y \
     ruby2.3-dev \
     ruby2.3-doc \
     build-essential \
-    libpq-dev \
     libv8-dev \
+    libpq-dev \
     sqlite3 \
     libsqlite3-dev \
+    libmysqlclient-dev \
     passenger \
     bcrypt \
-    libsqlite3-dev \
-    nginx \
+		nginx \
     nginx-extras \
     libicu52 \
     supervisor \
@@ -42,6 +42,9 @@ RUN rm /usr/bin/ruby \
 
 # bundler
 RUN gem install bundler --no-rdoc --no-ri
+
+# irbrc
+COPY ./config/root/ /root/
 
 # nginx
 COPY ./config/nginx/nginx.conf /etc/nginx/nginx.conf
