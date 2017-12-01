@@ -28,6 +28,7 @@ RUN apt-get install -qy \
     rsync \
     openssl \
     sysstat \
+    zip \
     software-properties-common
 
 # locale
