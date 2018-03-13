@@ -3,17 +3,17 @@
 FROM meedan/nodejs
 MAINTAINER sysops@meedan.com
 
-# this and the addition to sources.list is modelled after...
-# https://github.com/phusion/passenger-docker/blob/master/image/enable_repos.sh
+# passenger
 RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 561F9B9CAC40B2F7
-COPY config/apt/passenger-sources.list /etc/apt/sources.list.d/passenger-sources.list
+RUN echo deb https://oss-binaries.phusionpassenger.com/apt/passenger trusty main > /etc/apt/sources.list.d/passenger.list
 
 # ruby 2.3 repos
 RUN apt-add-repository ppa:brightbox/ruby-ng \
     && apt-get update --fix-missing
 
 # http://www.modrails.com/documentation/Users%20guide%20Nginx.html#_installing_packages
-# supervisor is installed since it gets used frequently to kick of delayed job
+# supervisor is installed since it gets used frequently to kick off delayed job
+# imagemagick is used by several downstream containers
 RUN apt-get install -y \ 
     ruby2.3 \
     ruby2.3-dev \
@@ -24,14 +24,34 @@ RUN apt-get install -y \
     sqlite3 \
     libsqlite3-dev \
     libmysqlclient-dev \
-    passenger \
     bcrypt \
-		nginx \
-    nginx-extras \
     libicu52 \
     supervisor \
-    tidy
+    tidy \
+    nginx \
+    nginx-extras \
+    ruby-rack \
+    passenger \
+    imagemagick        
     
+# work around for passenger checksum
+#	nginx \
+#    nginx-extras \
+# ENV PASSENGER_VERSION=5.1.11 \
+#     NGINX_VERSION=1.12.1
+# ADD https://oss-binaries.phusionpassenger.com/apt/passenger/pool/trusty/main/p/passenger/passenger_${PASSENGER_VERSION}-1~trusty1_amd64.deb ./passenger_${PASSENGER_VERSION}-1~trusty1_amd64.deb
+# ADD https://oss-binaries.phusionpassenger.com/apt/passenger/pool/trusty/main/n/nginx/nginx-common_${NGINX_VERSION}-8.5.1.9~trusty1_all.deb ./nginx-common_${NGINX_VERSION}-8.5.1.9~trusty1_all.deb
+# ADD https://oss-binaries.phusionpassenger.com/apt/passenger/pool/trusty/main/n/nginx/nginx-extras_${NGINX_VERSION}-8.5.1.9~trusty1_amd64.deb ./nginx-extras_${NGINX_VERSION}-8.5.1.9~trusty1_amd64.deb
+# ADD https://oss-binaries.phusionpassenger.com/apt/passenger/pool/trusty/main/n/nginx/nginx_${NGINX_VERSION}-8.5.1.9~trusty1_all.deb ./nginx_${NGINX_VERSION}-8.5.1.9~trusty1_all.deb
+
+# RUN dpkg -i ./passenger_${PASSENGER_VERSION}-1~trusty1_amd64.deb \
+#     && dpkg -i ./nginx-common_${NGINX_VERSION}-8.5.1.9~trusty1_all.deb \
+#     && dpkg -i ./nginx-extras_${NGINX_VERSION}-8.5.1.9~trusty1_amd64.deb \
+#     && dpkg -i ./nginx_${NGINX_VERSION}-8.5.1.9~trusty1_all.deb \
+#     && rm ./passenger_${PASSENGER_VERSION}-1~trusty1_amd64.deb \
+#     && rm ./nginx_${NGINX_VERSION}-8.5.1.9~trusty1_all.deb \
+#     && rm ./nginx-extras_${NGINX_VERSION}-8.5.1.9~trusty1_amd64.deb
+
 # ruby config
 RUN rm /usr/bin/ruby \
     && ln -s /usr/bin/ruby2.3 /usr/bin/ruby \
